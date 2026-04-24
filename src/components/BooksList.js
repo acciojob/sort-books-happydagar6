@@ -30,22 +30,23 @@ const BooksList = () => {
         return 0;
     });
 
-    if (loading) return <div>Loading books...</div>;
-    if (error) return <div>Error fetching books: {error}</div>;
-
     return (
         <div className="books-list-container">
-            <h1>New York Times Best Sellers</h1>
+            <h1>Books List</h1>
+
+            {error ? <p>Error fetching books: {error}</p> : null}
             
             {/* The wrapper here ensures Cypress correctly targets the select elements as nth-child(1) and nth-child(2) */}
             <div className="sorting-controls">
-                <select onChange={handleSortByChange} value={sortBy}>
+                <label htmlFor="sortBy">sort by</label>
+                <select id="sortBy" onChange={handleSortByChange} value={sortBy}>
                     <option value="title">Title</option>
                     <option value="author">Author</option>
                     <option value="publisher">Publisher</option>
                 </select>
 
-                <select onChange={handleSortOrderChange} value={sortOrder}>
+                <label htmlFor="sortOrder">order</label>
+                <select id="sortOrder" onChange={handleSortOrderChange} value={sortOrder}>
                     <option value="asc">Ascending</option>
                     <option value="desc">Descending</option>
                 </select>
@@ -61,7 +62,11 @@ const BooksList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {sortedBooks.length > 0 ? (
+                    {loading && sortedBooks.length === 0 ? (
+                        <tr>
+                            <td colSpan="4">Loading books...</td>
+                        </tr>
+                    ) : sortedBooks.length > 0 ? (
                         sortedBooks.map((book, index) => (
                             <tr key={book.primary_isbn13 || index}>
                                 <td>{book.title}</td>
