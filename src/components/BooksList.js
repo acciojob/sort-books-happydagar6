@@ -1,0 +1,85 @@
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchBooks, setSortBy, setSortOrder } from '../redux/actions';
+
+const BooksList = () => {
+    const dispatch = useDispatch();
+    const { books, loading, error, sortBy, sortOrder } = useSelector((state) => state);
+
+    useEffect(() => {
+        dispatch(fetchBooks());
+    }, [dispatch]);
+
+    const handleSortByChange = (e) => {
+        dispatch(setSortBy(e.target.value));
+    };
+
+    const handleSortOrderChange = (e) => {
+        dispatch(setSortOrder(e.target.value));
+    };
+
+    // Derived state: sort the books array without mutating the original Redux state
+    const safeBooks = Array.isArray(books) ? books : [];
+    const sortedBooks = [...safeBooks].sort((a, b) => {
+        // Fallbacks added in case a field is missing from the API response
+        const valA = (a[sortBy] || '').toLowerCase();
+        const valB = (b[sortBy] || '').toLowerCase();
+
+        if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+        if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    if (loading) return <div>Loading books...</div>;
+    if (error) return <div>Error fetching books: {error}</div>;
+
+    return (
+        <div className="books-list-container">
+            <h1>New York Times Best Sellers</h1>
+            
+            {/* The wrapper here ensures Cypress correctly targets the select elements as nth-child(1) and nth-child(2) */}
+            <div className="sorting-controls">
+                <select onChange={handleSortByChange} value={sortBy}>
+                    <option value="title">Title</option>
+                    <option value="author">Author</option>
+                    <option value="publisher">Publisher</option>
+                </select>
+
+                <select onChange={handleSortOrderChange} value={sortOrder}>
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Publisher</th>
+                        <th>ISBN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {sortedBooks.length > 0 ? (
+                        sortedBooks.map((book, index) => (
+                            <tr key={book.primary_isbn13 || index}>
+                                <td>{book.title}</td>
+                                <td>{book.author}</td>
+                                <td>{book.publisher}</td>
+                                {/* Checks for primary_isbn13, falls back to isbn if different API structure */}
+                                <td>{book.primary_isbn13 || book.isbn || 'N/A'}</td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="4">No books found.</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+    );
+};
+
+export default BooksList;
