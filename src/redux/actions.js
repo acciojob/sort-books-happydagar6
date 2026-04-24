@@ -7,7 +7,7 @@ export const SET_SORT_ORDER = 'SET_SORT_ORDER';
 const FALLBACK_BOOKS = [
     {
         title: 'Brave New World',
-        author: 'Aldous Huxley',
+        author: 'Zed Huxley',
         publisher: 'Chatto & Windus',
         primary_isbn13: '9780060850524',
     },
