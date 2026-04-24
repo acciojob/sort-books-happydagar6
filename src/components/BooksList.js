@@ -36,20 +36,23 @@ const BooksList = () => {
 
             {error ? <p>Error fetching books: {error}</p> : null}
             
-            {/* The wrapper here ensures Cypress correctly targets the select elements as nth-child(1) and nth-child(2) */}
-            <div className="sorting-controls">
-                <label htmlFor="sortBy">sort by</label>
-                <select id="sortBy" onChange={handleSortByChange} value={sortBy}>
-                    <option value="title">Title</option>
-                    <option value="author">Author</option>
-                    <option value="publisher">Publisher</option>
-                </select>
+            <div className="sorting-container sorting-controls">
+                <div>
+                    <label htmlFor="sortBy">Sort by:</label>
+                    <select id="sortBy" onChange={handleSortByChange} value={sortBy}>
+                        <option value="title">Title</option>
+                        <option value="author">Author</option>
+                        <option value="publisher">Publisher</option>
+                    </select>
+                </div>
 
-                <label htmlFor="sortOrder">order</label>
-                <select id="sortOrder" onChange={handleSortOrderChange} value={sortOrder}>
-                    <option value="asc">Ascending</option>
-                    <option value="desc">Descending</option>
-                </select>
+                <div>
+                    <label htmlFor="sortOrder">Order:</label>
+                    <select id="sortOrder" onChange={handleSortOrderChange} value={sortOrder}>
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </div>
             </div>
 
             <table>
